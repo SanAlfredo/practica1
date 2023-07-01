@@ -113,21 +113,38 @@
             </div>
             <h5>Color</h5>
             <div class="row">
-                <div class="color-box" v-for="items in producto.colores">
-                    <div
-                    class="color-box clic"
-                    :style="{background: items}"
-                  ></div>
-                </div>
+              <div class="color-box" v-for="items in producto.colores">
+                <div
+                  class="color-box clic"
+                  v-on:click="pedido.color=items"
+                  :style="{background: active ? items:'green'}"
+                ></div>
+              </div>
             </div>
+            <h5 v-if="pedido.color!=null">Color seleccionado {{pedido.color}}</h5>
             <h5>Cantidad</h5>
             <div class="quantity">
-              <button>-</button>
-              <div>1</div>
-              <button>+</button>
+              <template>
+                <button
+                  v-on:click="pedido.cantidad -=1"
+                  :disabled="pedido.cantidad<=0"
+                >
+                  -
+                </button>
+                <div v-if="pedido.cantidad>=0">{{pedido.cantidad}}</div>
+                <div v-else>0</div>
+              </template>
+              <button v-on:click="pedido.cantidad +=1">+</button>
             </div>
             <div class="buy-box">
-              <button type="button" class="btn btn-primary">Comprar</button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                :disabled="pedido.cantidad<=0"
+                v-on:click="comprarAlgo()"
+              >
+                Comprar
+              </button>
             </div>
           </div>
         </div>
@@ -142,15 +159,11 @@
             <div class="card" style="width: 18rem">
               <div class="card-body">
                 <h5 class="card-title">{{item.nombre}}</h5>
-                <img
-                  :src="item.imagen"
-                  alt=""
-                  width="100%"
-                />
-                <p class="card-text">
-                  {{item.descripcion}}
-                </p>
-                <div class="producto-relacionado-precio">Precio: {{item.precio}} BOB</div>
+                <img :src="item.imagen" alt="" width="100%" />
+                <p class="card-text">{{item.descripcion}}</p>
+                <div class="producto-relacionado-precio">
+                  Precio: {{item.precio}} BOB
+                </div>
                 <div class="row">
                   <div class="color-box" v-for="colors in item.colores">
                     <div class="color-box" :style="{background: colors}"></div>
@@ -161,7 +174,7 @@
           </div>
         </div>
       </div>
-      
+
       <footer
         :style="{backgroundColor: configuracionPagina.footerColor}"
       ></footer>
@@ -209,7 +222,8 @@
             },
             {
               id: 3,
-              imagen: "https://img.joomcdn.net/b8b5db95a5541d43fb13999480b585d8c22c146d_original.jpeg",
+              imagen:
+                "https://img.joomcdn.net/b8b5db95a5541d43fb13999480b585d8c22c146d_original.jpeg",
               nombre: "KBDFA-Dron E888 RC",
               descripcion:
                 "KBDFA-Dron E888 RC, cuadricóptero profesional FPV, 4K HD, fotografía aérea, evitación de obstáculos, helicóptero, juguetes de distancia",
@@ -218,7 +232,8 @@
             },
             {
               id: 4,
-              imagen: "https://lzd-img-global.slatic.net/g/p/797df240cb2af5869bcc1168d9b902c8.jpg_1200x1200q80.jpg_.webp",
+              imagen:
+                "https://lzd-img-global.slatic.net/g/p/797df240cb2af5869bcc1168d9b902c8.jpg_1200x1200q80.jpg_.webp",
               nombre: "Dron Profesional 4K con GPS",
               descripcion:
                 "Dron Profesional 4K con GPS, 8K, cámara HD, 3 ejes, cardán antivibración, evitación de obstáculos, fotografía aérea, Quadcopter, nuevo",
@@ -226,6 +241,21 @@
               colores: ["teal", "blue", "slategrey", "navy"],
             },
           ],
+          active: true,
+          pedido: {
+            id: null,
+            cantidad: 0,
+            color: null,
+          },
+        },
+        methods: {
+          comprarAlgo() {
+            if(this.pedido.color!=null){
+                this.pedido.id=this.producto.id
+                alert('Producto: '+this.pedido.id+'\nCantidad: '+this.pedido.cantidad+
+                '\nColor seleccionado: '+this.pedido.color)
+            }
+          },
         },
       });
     </script>
